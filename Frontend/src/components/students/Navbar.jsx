@@ -27,7 +27,7 @@ function Navbar() {
           {user && <> <button className='cursor-pointer' onClick={() => navigate('/mentor')}>{ isMentor ? "Mentor Dashboard" : "Become Mentor"}</button>
           | <Link to='/my-enrollments '>My Enrollments</Link> </>} 
         </div>
-        {user ? <UserButton /> : <button onClick={() => openSignIn()} className='bg-green-700 text-white px-5 py-2 rounded-full'>Create Account</button>}
+        {user ? <UserButton /> : <button onClick={() => openSignIn()} className='bg-green-700 cursor-pointer text-white px-5 py-2 rounded-full'>Create Account</button>}
       </div>
       <div className='md:hidden flex items-center gap-2 sm:gap-5 text-gray-500'>
         <div className='flex items-center justify-between gap-3 sm:gap-2 max-sm:text-xs' >
