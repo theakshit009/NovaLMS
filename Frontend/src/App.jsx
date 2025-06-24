@@ -6,12 +6,12 @@ import CourseDetails from "./pages/students/CourseDetails"
 import MyEnrollments from "./pages/students/MyEnrollments"
 import Player from "./pages/students/Player"
 import Loading from "./components/students/Loading"
-import Educator from "./pages/mentors/Educator"
 import Dashboard from "./pages/mentors/Dashboard"
 import AddCourse from "./pages/mentors/AddCourse"
 import MyCourses from "./pages/mentors/MyCourses"
 import StudentsEnrolled from "./pages/mentors/StudentsEnrolled"
 import Navbar from './components/students/Navbar'
+import Mentor from './pages/mentors/Mentor'
 function App() {
 
   const isMentorRoute = useMatch('/mentor/*');
@@ -27,7 +27,7 @@ function App() {
         <Route path='/my-enrollments' element={<MyEnrollments />} />
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
-        <Route path='/mentor' element={<Educator />}>
+        <Route path='/mentor' element={<Mentor />}>
           <Route path='mentor-dash' element={<Dashboard />} />
           <Route path='add-course' element={<AddCourse />} />
           <Route path='my-course' element={<MyCourses />} />
