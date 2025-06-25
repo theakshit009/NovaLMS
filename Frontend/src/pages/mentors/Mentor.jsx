@@ -2,6 +2,7 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../../components/mentor/Navbar'
 import Sidebar from '../../components/mentor/Sidebar'
+import MFooter from '../../components/mentor/MFooter'
 
 function Mentor() {
   return (
@@ -13,6 +14,7 @@ function Mentor() {
           <Outlet />
         </div>
       </div>
+      <MFooter />
     </div>
   )
 }
