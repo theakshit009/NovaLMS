@@ -12,6 +12,8 @@ import MyCourses from "./pages/mentors/MyCourses"
 import StudentsEnrolled from "./pages/mentors/StudentsEnrolled"
 import Navbar from './components/students/Navbar'
 import Mentor from './pages/mentors/Mentor'
+import "quill/dist/quill.snow.css";
+
 function App() {
 
   const isMentorRoute = useMatch('/mentor/*');
