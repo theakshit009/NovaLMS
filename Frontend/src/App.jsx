@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes, useMatch } from 'react-router-dom'
+import { Route, Routes, useMatch, Navigate } from 'react-router-dom'
 import Home from './pages/students/Home'
 import CourseList from "./pages/students/CoursesList"
 import CourseDetails from "./pages/students/CourseDetails"
@@ -30,6 +30,7 @@ function App() {
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
         <Route path='/mentor' element={<Mentor />}>
+          <Route index element={<Navigate to="mentor-dash" replace />} />
           <Route path='mentor-dash' element={<Dashboard />} />
           <Route path='add-course' element={<AddCourse />} />
           <Route path='my-course' element={<MyCourses />} />
