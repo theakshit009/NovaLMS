@@ -24,7 +24,7 @@ app.post('/clerk', express.json(), clerkWebhooks)
 app.use('/api/mentor', express.json(), mentorRouter)
 app.use('/api/course', express.json(), courseRouter)
 app.use('/api/user', express.json(), usertRouter)
-app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
+app.post('/stripe', express.raw({type: 'application/json'}), stripeWebhooks);
 
 const PORT = process.env.PORT || 5090
 
