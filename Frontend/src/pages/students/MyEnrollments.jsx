@@ -35,7 +35,7 @@ function MyEnrollments() {
       toast.error(error.message)
     }
   }
-  console.log(progress)
+  (progress)
 
   useEffect(() => {
     if(userData){

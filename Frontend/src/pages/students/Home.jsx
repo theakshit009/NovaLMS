@@ -12,7 +12,6 @@ function Home() {
       <Hero />
       <Companies />
       <CourseSection />
-      <Testimonials />
       <CalltoAction />
       <Footer />
     </div>

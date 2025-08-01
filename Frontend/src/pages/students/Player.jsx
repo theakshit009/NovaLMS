@@ -123,7 +123,6 @@ function Player() {
       toast.error(error.message)
     }
   }
-  console.log(progressData)
 
   useEffect(() =>{
     getCourseProgress()

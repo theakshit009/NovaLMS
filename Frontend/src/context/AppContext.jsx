@@ -55,7 +55,6 @@ export const AppContextProvider = (props) => {
 
     try {
         const token = await getToken();
-        console.log(token)
         const resp = await axios.get(backendUrl + '/api/user/data',
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -130,12 +129,8 @@ export const AppContextProvider = (props) => {
     
     useEffect(() => {
     if(user && isLoaded){
-        console.log("user changed, calling fetchUserData and userCourses...");
         fetchUserData();
         userCourses();
-    } else {
-        console.log("No user -- not fetching user data.");
-        // Optionally clear user-specific state here
     }
 },[user,isLoaded]);
 

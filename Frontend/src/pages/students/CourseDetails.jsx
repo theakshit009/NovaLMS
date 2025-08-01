@@ -22,7 +22,7 @@ function CourseDetails() {
 
   const { calculateRating, CalculateNoOfLectures, calculateCourseDuration, calculateChapterTimings, currency, getToken, backendUrl, userData} = useContext(AppContext)
 
-  if(userData) console.log(userData)
+  
   
   const fetchData = async () => {
     try {

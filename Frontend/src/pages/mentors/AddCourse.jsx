@@ -22,7 +22,7 @@ function AddCourse() {
   const [currentChapterId, setCurrentChapterId] = useState(null);
   const [lectureDetails, setLectureDetails] = useState({
     lectureTitle : '',
-    lectureDutration : '',
+    lectureDuration : '',
     lectureUrl : '',
     isPreviewFree : false
   });
@@ -122,7 +122,7 @@ function AddCourse() {
       const token = await getToken()
       const {data} = await axios.post(backendUrl + '/api/mentor/add-course',formData, {
         headers: {
-          Authorization: `Bearer + ${token}`
+          Authorization: `Bearer ${token}`
         }
       })
       if(data.success){
@@ -164,7 +164,7 @@ function AddCourse() {
             <label htmlFor="thumbnailImage" className='flex items-center gap-3'>
               <img src={assets.file_upload_icon} className='p-3 bg-green-700 rounded' alt="" />
               <input type="file" id='thumbnailImage' onChange={e => setImage(e.target.files[0])} accept='image/*' hidden />
-              <img src={image ? URL.createObjectURL(image) : ''} className='max-h-10' alt="" />
+              <img src={image ? URL.createObjectURL(image) : null} className='max-h-10' alt="" />
             </label>
           </div>
         </div>

@@ -1,19 +1,39 @@
-import React, { useEffect, useState } from 'react'
-import { dummyStudentEnrolled } from '../../assets/assets';
-import { useSearchParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react'
 import Loading from '../../components/students/Loading';
+import { AppContext } from '../../context/AppContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function StudentsEnrolled() {
+
+  const {backendUrl, getToken, isMentor} = useContext(AppContext)
 
   const [enrolledStudents, setEnrolledStudents] = useState(null);
 
   const fetchEnrolledStudent = async () => {
-    setEnrolledStudents(dummyStudentEnrolled);
+    try {
+      const token = await getToken()
+      const {data} = await axios.get(backendUrl + '/api/mentor/enrolled-students', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if(data.success){
+        setEnrolledStudents(data.enrolledStudents.reverse())
+      }
+      else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   useEffect(() => {
-    fetchEnrolledStudent();
-  },[]);
+    if(isMentor){
+      fetchEnrolledStudent()
+    }
+  },[isMentor]);
 
   return enrolledStudents ? (
     <div className='min-h-screen flex flex-col items-start justify-between md:p8 md:pb-0 p-4 pt-8 pb-0'>
@@ -36,7 +56,11 @@ function StudentsEnrolled() {
                   <span className='truncate'>{item.student.name}</span>
                 </td>
                 <td className='px-4 py-3 truncate'>{item.courseTitle} </td>
-                <td className='px-4 py-3 hidden sm:table-cell'>{new Date(item.purchaseDate).toLocaleDateString()} </td>
+                <td className='px-4 py-3 hidden sm:table-cell'>{item.purchaseData ? new Date(item.purchaseData).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  }) : 'N/A'} </td>
               </tr>
             ))}
           </tbody>
