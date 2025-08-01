@@ -13,12 +13,14 @@ import StudentsEnrolled from "./pages/mentors/StudentsEnrolled"
 import Navbar from './components/students/Navbar'
 import Mentor from './pages/mentors/Mentor'
 import "quill/dist/quill.snow.css";
+import { ToastContainer } from 'react-toastify'
 
 function App() {
 
   const isMentorRoute = useMatch('/mentor/*');
   return (
     <div className='text-default min-h-screen bg-white'>
+      <ToastContainer />
       {!isMentorRoute && <Navbar />}
       
       <Routes>

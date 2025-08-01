@@ -7,7 +7,7 @@ usertRouter.get('/data', getUserData)
 usertRouter.get('/enrolled-courses', userEnrolledCourses)
 usertRouter.post('/purchase', purchaseCourse)
 usertRouter.post('/update-course-progress', updateUserCourseProgress)
-usertRouter.get('/get-course-progress', getUserCourseProgress)
+usertRouter.post('/get-course-progress', getUserCourseProgress)
 usertRouter.post('/add-rating', addUserRating)
 
 export default usertRouter

@@ -6,19 +6,34 @@ import humanizeDuration from 'humanize-duration'
 import Youtube from 'react-youtube'
 import Footer from '../../components/students/Footer'
 import Rating from '../../components/students/Rating'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import Loading from '../../components/students/Loading'
 
 function Player() {
-  const {enrolledCourses, calculateChapterTimings} = useContext(AppContext)
+  const {enrolledCourses, calculateChapterTimings, backendUrl, getToken, userData, fetchAllCourses} = useContext(AppContext)
+
   const {courseId} = useParams()
   const [data, setData] = useState(null)
   const [openSection, setOpenSection] = useState({})
   const [playerdata, setPlayerData] = useState(null)
+  const [progressData, setProgressData] = useState(null)
+  const [inititalRating, setInitialRating] = useState(0)
 
-  const getCourseData = () =>{
-    enrolledCourses.map((course) => {
-      if(course._id === courseId) setData(course)
-    })
-  }
+  const getCourseData = () => {
+  enrolledCourses.forEach((course) => {
+    if (course._id === courseId) {
+      setData(course);
+      if (userData && course.courseRating) {
+        course.courseRating.forEach((item) => {
+          if (item.userId === userData._id) {
+            setInitialRating(item.rating);
+          }
+        });
+      }
+    }
+  });
+};
 
   const toggleSetion = (index) => {
     setOpenSection((prev) => (
@@ -30,10 +45,91 @@ function Player() {
   }
 
   useEffect(() => {
-    getCourseData()
+    if(enrolledCourses.length > 0){
+      getCourseData()
+    }
   },[enrolledCourses])
 
-  return (
+  const markLectureAsCompleted = async (lectureId) => {
+  if (progressData?.lectureCompleted?.includes(lectureId)) {
+    toast.info("Lecture already marked as completed.");
+    return;
+  }
+
+  try {
+    const token = await getToken();
+    const { data } = await axios.post(
+      `${backendUrl}/api/user/update-course-progress`,
+      { courseId, lectureId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (data.success) {
+      toast.success(data.message || "Lecture marked complete!");
+      getCourseProgress();
+    } else {
+      toast.error(data.message || "Failed to mark complete.");
+    }
+  } catch (error) {
+    toast.error(error?.response?.data?.message || error.message);
+  }
+};
+
+
+  const getCourseProgress = async () => {
+  if (!courseId) return; // guard
+  try {
+    const token = await getToken();
+    const { data } = await axios.post(
+      backendUrl + '/api/user/get-course-progress',
+      { courseId }, // ensure this is defined
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (data.success) {
+      setProgressData(data.progressData);
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error?.response?.data?.message || error.message);
+  }
+};
+
+  const handleRate = async (rating) => {
+    try {
+      const token = await getToken()
+      const {data} = await axios.post(backendUrl + '/api/user/add-rating', {
+        courseId, rating
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if(data.success){
+        toast.success(data.message)
+        fetchAllCourses()
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+  console.log(progressData)
+
+  useEffect(() =>{
+    getCourseProgress()
+  },[courseId])
+
+  return data ?  (
     <>
       <div className='p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36'>
         <div className='text-gray-800'>
@@ -52,7 +148,11 @@ function Player() {
                   <ul className='list-disc md:pl-10 pl-4 py-2 text-gray-600 border-t border-gray-300'>
                     {chapter.chapterContent.map((lecture, lind) => (
                       <li className='flex items-start gap-2 py-1' key={ind}>
-                        <img className='h-4 w-4 mt-1' src={false ? assets.blue_tick_icon : assets.play_icon} alt="play-icon" />
+                        <img className='h-4 w-4 mt-1' src={
+    progressData?.lectureCompleted?.includes(lecture?.lectureId)
+      ? assets.blue_tick_icon
+      : assets.play_icon
+  } alt="play-icon" />
                         <div className='flex items-center justify-between w-full text-gray-800 text-xs md:text-default'>
                           <p>{lecture.lectureTitle}</p>
                           <div className='flex gap-2 px-4'>
@@ -71,7 +171,7 @@ function Player() {
           </div>
           <div className='flex items-center gap-2 py-3 mt-10'>
             <h1 className='text-xl font-bold'>Rate this course:</h1>
-            <Rating />
+            <Rating initialRating={inititalRating} onRate={handleRate} />
           </div>
         </div>
 
@@ -83,7 +183,7 @@ function Player() {
                 <Youtube videoId={playerdata.lectureUrl.split('/').pop()} opts={{playerVars: { autoplay : 1}}} iframeClassName='w-full aspect-video' /> 
                 <div className='flex justify-between items-center mt-1'>
                   <p>{playerdata.chapter}.{playerdata.lecture} {playerdata.lectureTitle} </p>
-                  <button className='text-green-700'>{false ? 'Completed' : 'Mark Complete'}</button>
+                  <button onClick={() =>markLectureAsCompleted(playerdata.lectureId)} className='text-green-700'>{progressData?.lectureCompleted?.includes(playerdata?.lectureId) ? 'Completed' : 'Mark Complete'}</button>
                 </div>
               </div>
           ):<img src={data ? data.courseThumbnail : ''} alt="" />}   
@@ -91,7 +191,7 @@ function Player() {
       </div>
       <Footer />
     </>
-  )
+  ) : <Loading />
 }
 
 export default Player

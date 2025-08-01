@@ -3,15 +3,40 @@ import { assets } from "../../assets/assets"
 import { Link } from 'react-router-dom'
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 import { AppContext } from '../../context/AppContext';
+import axios from 'axios'
+import { toast } from 'react-toastify';
 
 function Navbar() {
-  const {navigate, isMentor,} = useContext(AppContext)
+  const {navigate, isMentor, backendUrl, setIsMentor, getToken } = useContext(AppContext)
 
   const isCourseListPage = location.pathname.includes('/course-list');
 
   const { openSignIn } = useClerk();
 
   const { user } = useUser();
+
+  const becomeMentor = async () => {
+    try {
+      if(isMentor){
+        navigate('/mentor')
+        return
+      }
+      const token = await getToken()
+      const {data} = await axios.get(backendUrl + '/api/mentor/update-role', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if(data.success){
+        setIsMentor(true)
+        toast.success('You are now become an Mentor');
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
   
 
   return (
@@ -24,7 +49,7 @@ function Navbar() {
       </div>
       <div className='hidden md:flex items-center gap-5 text-gray-500'>
         <div className='flex items-center gap-5'>
-          {user && <> <button className='cursor-pointer' onClick={() => navigate('/mentor')}>{ isMentor ? "Mentor Dashboard" : "Become Mentor"}</button>
+          {user && <> <button onClick={becomeMentor} className='cursor-pointer'>{ isMentor ? "Mentor Dashboard" : "Become Mentor"}</button>
           | <Link to='/my-enrollments '>My Enrollments</Link> </>} 
         </div>
         {user ? <UserButton /> : <button onClick={() => openSignIn()} className='bg-green-700 cursor-pointer text-white px-5 py-2 rounded-full'>Create Account</button>}
