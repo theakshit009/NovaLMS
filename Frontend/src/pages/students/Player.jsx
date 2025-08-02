@@ -124,6 +124,19 @@ function Player() {
     }
   }
 
+   function extractYoutubeVideoId(url) {
+    try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1); // /VIDEOID → VIDEOID
+    } else if (urlObj.hostname.includes('youtube.com')) {
+      return urlObj.searchParams.get('v'); // ?v=VIDEOID
+    }
+  } catch (e) {
+    return url;
+  }
+  }
+
   useEffect(() =>{
     getCourseProgress()
   },[courseId])
@@ -179,7 +192,7 @@ function Player() {
         <div className='md:mt-10'>
           {playerdata ? (
               <div>
-                <Youtube videoId={playerdata.lectureUrl.split('/').pop()} opts={{playerVars: { autoplay : 1}}} iframeClassName='w-full aspect-video' /> 
+                <Youtube videoId={extractYoutubeVideoId(playerdata.lectureUrl)} opts={{playerVars: { autoplay : 1}}} iframeClassName='w-full aspect-video' /> 
                 <div className='flex justify-between items-center mt-1'>
                   <p>{playerdata.chapter}.{playerdata.lecture} {playerdata.lectureTitle} </p>
                   <button onClick={() =>markLectureAsCompleted(playerdata.lectureId)} className='text-green-700'>{progressData?.lectureCompleted?.includes(playerdata?.lectureId) ? 'Completed' : 'Mark Complete'}</button>
