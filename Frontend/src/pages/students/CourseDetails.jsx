@@ -38,6 +38,20 @@ function CourseDetails() {
     }
   }
 
+  function extractYoutubeVideoId(url) {
+    try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1); // /VIDEOID → VIDEOID
+    } else if (urlObj.hostname.includes('youtube.com')) {
+      return urlObj.searchParams.get('v'); // ?v=VIDEOID
+    }
+  } catch (e) {
+    return url;
+  }
+  }
+
+
   const enrolledCourse = async () => {
     try {
       if(!userData){
@@ -120,7 +134,7 @@ function CourseDetails() {
                         <div className='flex items-center justify-between w-full text-gray-800 text-xs md:text-default'>
                           <p>{lecture.lectureTitle}</p>
                           <div className='flex gap-2 px-4'>
-                            {lecture.isPreviewFree && <p onClick={() => setPlayerData({videoId : lecture.lectureUrl.split('/').pop()})} className='text-green-700 cursor-pointer'>Preview</p>}
+                            {lecture.isPreviewFree && <p onClick={() => setPlayerData({videoId : extractYoutubeVideoId(lecture.lectureUrl)})} className='text-green-700 cursor-pointer'>Preview</p>}
                             <p>{ humanizeDuration(lecture.lectureDuration * 60 * 1000, {units : ["h", "m"]})}</p>
                           </div>
                         </div>
