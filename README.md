@@ -20,7 +20,7 @@ NovaLMS is a fully functional, full-stack **Learning Management System** built w
 
 ## 📸 Preview
 
-https://drive.google.com/file/d/16sJKlVEH91bMEA1XXj4li1ZqlLrxw5yc/view?usp=sharing
+(https://github.com/theakshit009/NovaLMS/issues/1#issue-3285575196)
 
 ---
 
